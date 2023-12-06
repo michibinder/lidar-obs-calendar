@@ -5,19 +5,19 @@
   
 .container {
 	font-family: 'Montserrat', sans-serif;
-	margin: 30px auto;
-	padding: 10px 15px 10px 30px; // top right bottom left
+	margin: 30px auto; 
+	padding: 10px 15px 10px 30px; /* top right bottom left */
 }
 
 .list-inline {
 	text-align: center;
-	margin-bottom: 30px;
+	margin-bottom: 15px;
 }
 
 .flex-image {
 	text-align: center;
 	vertical-align: middle;
-	// margin: 30px auto;
+	/* margin: 30px auto; */
 	padding: 10px 10px 10px 10px;
 }
 
@@ -28,10 +28,10 @@
 }
 th {
 	text-align: center;
-	// width: 90px;
+	/* width: 90px; */
 }
 td {
-	height: 95px;
+	height: 110px;
 	width: 90px;
 }
 th:nth-of-type(6), td:nth-of-type(6) {
@@ -49,10 +49,7 @@ th:nth-of-type(7), td:nth-of-type(7) {
 }
 
 .date_of_plot {
-	background-color: rgb(220, 121, 121); 
-}
-
-.normal_day {
+	background-color: lightgray; 
 }
 
 .btn-group-wrap {
@@ -72,10 +69,22 @@ div.btn-group {
 	text-align: left;
 	width:100%;    /* width of button */
 	/* border-radius: 7px; */
+	/* isplay:block; width: 100% for widths of button*/
 }
+
+.disabled {
+	opacity: 1;
+	cursor: not-allowed;
+  }
 
 .text-right {
 	float:right;
+	padding: 0px 0px 0px 5px;
+}
+
+.text-left {
+	float:left;
+	padding: 0px 5px 0px 0px;
 }
 
 .hide_nm {

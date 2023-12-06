@@ -1,51 +1,96 @@
 <?php
-// timezone
+
+function generate_plot_infos($plotlist){
+    $plot_dates = array();
+    $plot_dates_and_time = array();
+    $plot_durations = array();
+    foreach($plotlist as $plot):
+        $plot_date_string = substr(basename($plot), 0,8);
+        $plot_date = date_create_from_format('Ymd', $plot_date_string);
+
+        // --- With time --- //
+        $plot_time_string = substr(basename($plot), 0,13);
+        $plot_time = date_create_from_format('Ymd-Hi', $plot_time_string);
+
+        // --- Array with durations --- //
+        $plot_durations_string = substr(basename($plot), 14,5);
+        if ($plot_durations_string[0] == '0'):
+            $hours = $plot_durations_string[1];
+        else:
+            $hours = $plot_durations_string[0] . $plot_durations_string[1];
+        endif;
+        $minutes = $plot_durations_string[2] . $plot_durations_string[3];
+
+        // --- Append to arrays --- #
+        $plot_dates[]          = date_format($plot_date, 'Y-m-j');     // use this for marking available plots!!
+        $plot_dates_and_time[] = date_format($plot_time, 'Y-m-j H:i'); // use this for marking available plots!!
+        $plot_durations[]      = $hours . 'h' . $minutes;
+    endforeach;
+
+    $plot_infos = array($plot_dates, $plot_dates_and_time, $plot_durations);
+    return $plot_infos;
+}
+
+// --- Timezone --- //
 date_default_timezone_set('Europe/Paris');
 //date_default_timezone_set('UTC');
 
-// Determine the required state for button and plot content
-// content_state = 0 -> tmp
-// content_state = 1 -> bwf
-// content_state = 2 -> tim
-// content_state = 3 -> backscatter
-// content_state = 3 -> era1, era2
-// 
-if (isset($_GET['content_state'])) {
-    $content_state = intval($_GET['content_state']);
+// --- Lidar instrument --- //
+// lidar = 0 -> CORAL
+// lidar = 1 -> TELMA
+// lidar = 2 -> HELIUM
+// lidar = 3 -> OP
+if (isset($_GET['lidar'])) {
+    $lidar = $_GET['lidar'];
 } else {
-    $content_state = 0;
+    $lidar = "coral";
 }
 
-// Get the list of all files with .jpg extension in the directory and safe it in an array named $available_plots
-chdir(__DIR__);
-# $dir = "../plots/tmp/*.png"; // starts from dir of index.php!!!!
-if ($content_state == 0) {
-    $dir = "../plots/tmp/*.png";
-} else {
-    $dir = "../plots/bwf/*.png";
-    }
-$dir_aerosol = "../plots/aerosol/*.png";
+if ($lidar == "telma")      {$bc="mediumturquoise";} // mediumturquoise, skyblue
+elseif ($lidar == "helium") {$bc="darkgray";}
+elseif ($lidar == "OP")     {$bc="mediumseagreen";}
+else                        {$bc="coral";}
 
-$available_plots = glob( $dir );
-natsort($available_plots);
-$available_plots_aerosol = glob( $dir_aerosol );
-natsort($available_plots_aerosol);
+// --- Plot content --- //
+// content = 0 -> tmp   (absolute temperature)
+// content = 1 -> vebwf (vertical butterworth filter)
+// content = 2 -> tempf (temporral filter)
+// content = 3 -> aerob (aerosol backscatter)
+// content = 4 -> era51 (era5 preview)
+// content = 5 -> era52 
+if (isset($_GET['content'])) {
+    $content = $_GET['content'];
+} else {
+    $content = "tmp";
+}
+
+// --- Get list of plots for all lidars --- //
+// Get list of files with .jpg extension in the directory and safe it in an array named $available_plots
+chdir(__DIR__); // starts from dir of index.php
+$dir_coral = "../plots/coral/" . $content . "/*.png";
+$dir_telma = "../plots/telma/" . $content . "/*.png";
+
+$plotlists = array();
+$plots_coral = glob($dir_coral);
+$plots_telma = glob($dir_telma);
+natsort($plots_coral);
+natsort($plots_telma);
+$plotlists[] = $plots_coral;
+$plotlists[] = $plots_telma;
 // $n = sizeof($available_plots);
 
-// List of BWF plots (not needed)
-// $dir_bwf = "../plots/bwf/*.png"; 
-// $available_plots_bwf = glob( $dir_bwf );
-// natsort($available_plots_bwf);
-// $n_bwf = sizeof($available_plots_bwf);
+if     ($lidar == "telma"){$available_plots = $plots_telma;}
+elseif ($lidar == "coral"){$available_plots = $plots_coral;}
+else   {$available_plots = $plots_coral;}
 
-// Get index of requested plot by checking arguments passed via url link
+// --- Get index for current plot --- //
 if (isset($_GET['index'])) {
     $i_plot = intval($_GET['index']);
     if ($i_plot >= count($available_plots)) {
         $i_plot = count($available_plots)-1;
     }
 } else {
-    // last available plot - to change with len()ss
+    // last available plot - to change with len()
     $i_plot = count($available_plots)-1;
 }
 
@@ -89,42 +134,31 @@ if ($nm_state == 0) {
 
 // ########################### //
 
-// get date of last plot
+// --- Get date of last plot --- #
 $last_plot = basename($available_plots[array_key_last($available_plots)]);
 $last_date_string = substr($last_plot, 0,8);
 $last_date = date_create_from_format('Ymd', $last_date_string);
 $date_of_last = date_format($last_date, 'Y-m-j');
 
-// get date of plot
+// --- Get date of plot --- #
 $current_plot = basename($available_plots[($i_plot)]);
 $current_date_string = substr($current_plot, 0,8);
 $current_date = date_create_from_format('Ymd', $current_date_string);
 $date_of_plot = date_format($current_date, 'Y-m-j');
 
-// Generate array with dates of measurements
-$plot_dates = array();
-$plot_dates_and_time = array();
-$plot_durations = array();
-foreach( $available_plots as $plot ):
-    $plot_date_string = substr(basename($plot), 0,8);
-    $plot_date = date_create_from_format('Ymd', $plot_date_string);
-    $plot_dates[] = date_format($plot_date, 'Y-m-j'); // use this for marking available plots!!
+// --- Generate arrays with plot infos (date, time, duration) --- #
+$plot_infos = generate_plot_infos($plotlists[0]);
+$plot_dates_coral          = $plot_infos[0];
+$plot_dates_and_time_coral = $plot_infos[1];
+$plot_durations_coral      = $plot_infos[2];
+$plot_infos = generate_plot_infos($plotlists[1]);
+$plot_dates_telma          = $plot_infos[0];
+$plot_dates_and_time_telma = $plot_infos[1];
+$plot_durations_telma      = $plot_infos[2];
 
-    // with time
-    $plot_time_string = substr(basename($plot), 0,13);
-    $plot_time = date_create_from_format('Ymd-Hi', $plot_time_string);
-    $plot_dates_and_time[] = date_format($plot_time, 'Y-m-j H:i'); // use this for marking available plots!!
-
-    // Array with durations
-    $plot_durations_string = substr(basename($plot), 14,5);
-    if ($plot_durations_string[0] == '0'):
-        $hours = $plot_durations_string[1];
-    else:
-        $hours = $plot_durations_string[0] . $plot_durations_string[1];
-    endif;
-    $minutes = $plot_durations_string[2] . $plot_durations_string[3];
-    $plot_durations[] = $hours . 'h' . $minutes;
-endforeach;
+// ------------------------------------------------------------
+// update colors (blue for telma, red for coral? )
+//echo $plot_dates_coral[1];
 
 // Get prev & next month by checking arguments passed via url link
 if (isset($_GET['ym'])) {
@@ -163,7 +197,7 @@ $str = date('N', $timestamp);
 
 // Array for calendar
 $weeks = [];
-$week = '';
+$week  = '';
 
 // Add empty cell(s)
 $week .= str_repeat('<td></td>', $str - 1);
@@ -183,14 +217,20 @@ for ($day = 1; $day <= $day_count; $day++, $str++) {
         $week .= '<td class="normal_day">';
     endif;
 
-    // Add number of day to cell
+    // --- Add number of day to cell --- //
     $week .= $day;
 
-    // Add event if plot_date
-    if (in_array($date, $plot_dates)) {
-        $keys = array_keys($plot_dates, $date);
+    // --- Add event if plot_date --- //
+    if (in_array($date, $plot_dates_coral)) {
+        $keys = array_keys($plot_dates_coral, $date);
         foreach( $keys as $i):
-            $week .= '<br/> <a href="?ym=' . $ym . '&index=' . $i . '&nm_state=' . $nm_state . '&content_state=' . $content_state . '" class="btn btn-secondary btn-sm">' . substr($plot_dates_and_time[$i],-5) . ' (' . $plot_durations[$i] . ')</a>';
+            $week .= '<br/> <a href="?ym=' . $ym . '&index=' . $i . '&nm_state=' . $nm_state . '&content=' . $content . '&lidar=coral' . '" class="btn btn-secondary btn-sm" style="background-color:coral; border-color:coral">' . substr($plot_dates_and_time_coral[$i],-5) . ' (' . $plot_durations_coral[$i] . ')</a>';
+        endforeach;
+    }
+    if (in_array($date, $plot_dates_telma)) {
+        $keys = array_keys($plot_dates_telma, $date);
+        foreach( $keys as $i):
+            $week .= '<br/> <a href="?ym=' . $ym . '&index=' . $i . '&nm_state=' . $nm_state . '&content=' . $content . '&lidar=telma' . '" class="btn btn-secondary btn-sm" style="background-color:mediumturquoise; border-color:mediumturquoise">' . substr($plot_dates_and_time_telma[$i],-5) . ' (' . $plot_durations_telma[$i] . ')</a>';
         endforeach;
     }
 
@@ -224,62 +264,51 @@ for ($day = 1; $day <= $day_count; $day++, $str++) {
 </head>
 <body>
     <!--<?php echo $plot_durations[$i_plot]; ?>-->
-    <div class='<?php echo $nm_div ?>' ><img src='./../plots/nightly_means.png'/></div>
+    <div class='<?php echo $nm_div ?>' ><img src='../images/nightly_means.png'/></div>
     <div class="row">
         <div class="col-xl-7 col-lg-8 col-md-12"> 
             <div class="container">
                 <ul class="list-inline">
-                    <li class="list-inline-item"><a href="?ym=<?= $prevYear; ?>&index=<?= $i_plot; ?>&nm_state=<?= $nm_state; ?>&content_state=<?= $content_state; ?>" class="btn btn-dark">&lt; year</a></li>
-                    <li class="list-inline-item"><a href="?ym=<?= $prev; ?>&index=<?= $i_plot; ?>&nm_state=<?= $nm_state; ?>&content_state=<?= $content_state; ?>" class="btn btn-dark">&lt; month</a></li>
+                    <li class="list-inline-item"><a href="?ym=<?= $prevYear; ?>&index=<?= $i_plot; ?>&nm_state=<?= $nm_state; ?>&content=<?= $content; ?>&lidar=<?= $lidar; ?>" class="btn btn-dark">&lt; year</a></li>
+                    <li class="list-inline-item"><a href="?ym=<?= $prev; ?>&index=<?= $i_plot; ?>&nm_state=<?= $nm_state; ?>&content=<?= $content; ?>&lidar=<?= $lidar; ?>" class="btn btn-dark">&lt; month</a></li>
                     <li class="list-inline-item"><span class="title"><?= $title; ?></span></li>
-                    <li class="list-inline-item"><a href="?ym=<?= $next; ?>&index=<?= $i_plot; ?>&nm_state=<?= $nm_state; ?>&content_state=<?= $content_state; ?>" class="btn btn-dark">month &gt;</a></li>
-                    <li class="list-inline-item"><a href="?ym=<?= $nextYear; ?>&index=<?= $i_plot; ?>&nm_state=<?= $nm_state; ?>&content_state=<?= $content_state; ?>" class="btn btn-dark">year &gt;</a></li>
+                    <li class="list-inline-item"><a href="?ym=<?= $next; ?>&index=<?= $i_plot; ?>&nm_state=<?= $nm_state; ?>&content=<?= $content; ?>&lidar=<?= $lidar; ?>" class="btn btn-dark">month &gt;</a></li>
+                    <li class="list-inline-item"><a href="?ym=<?= $nextYear; ?>&index=<?= $i_plot; ?>&nm_state=<?= $nm_state; ?>&content=<?= $content; ?>&lidar=<?= $lidar; ?>" class="btn btn-dark">year &gt;</a></li>
+                </ul>
+                <ul class="list-inline">
+                    <span class="text-left"><a href="../index.php" class="btn btn-dark"><?php echo $back_arrow; echo $home_symbol; ?></a></span>
+                    <span class="text-left"><a href="?ym=<?= $ym; ?>&index=<?= $i_plot; ?>&nm_state=<?php if ($nm_state==0) {echo '1';} else {echo '0';} ?>&content=<?= $content; ?>" class="btn btn-dark">Overview   <?php echo $toggle_button ?></a></span>
+                    <span class="list-inline"><button type="button" class="btn btn-secondary" style="width: 25%; font-weight: bold; opacity: 1; background-color: <?= $bc; ?>; border-color: <?= $bc; ?>" disabled><?= strtoupper($lidar); ?></button></span>
+                    <span class="text-right"><a href="calendar.php?nm_state=<?= $nm_state; ?>&content=<?= $content; ?>&lidar=<?= $lidar; ?>" class="btn btn-dark">Latest Measurement</a></span>
                 </ul>
                 <p>
-                    <span><a href="../index.php" class="btn btn-dark"><?php echo $back_arrow; echo $home_symbol; ?></a></span>
-                    <span><a href="?ym=<?= $ym; ?>&index=<?= $i_plot; ?>&nm_state=<?php if ($nm_state==0) {echo '1';} else {echo '0';} ?>&content_state=<?= $content_state; ?>" class="btn btn-dark">Nightly means overview <?php echo $toggle_button ?></a></span>
-                    <span class="text-right"><a href="calendar.php?nm_state=<?= $nm_state; ?>&content_state=<?= $content_state; ?>" class="btn btn-dark">Latest Measurement</a></span>
-                </p>
-                <p>
-                <div class="btn-group btn-group-toggle pagination-centered" data-toggle="buttons">
-                    <label class="btn btn-secondary btn-dark <?php if ($content_state==0) {echo 'active';} else {echo '';} ?>">
-                        <input type="radio" name="options" id="option1" autocomplete="off"> 
-                        <a href="?ym=<?= $ym; ?>&index=<?= $i_plot; ?>&nm_state=<?= $nm_state; ?>&content_state=0&change=2">
+                <div class="btn-group btn-group-toggle">
+                        <a href="?ym=<?= $ym; ?>&index=<?= $i_plot; ?>&nm_state=<?= $nm_state; ?>&content=tmp&lidar=<?= $lidar; ?>" class="btn btn-dark <?php if ($content=="tmp") {echo 'active';} else {echo '';} ?>">
                         Temperature
                         </a>
-                    </label>
-                    <label class="btn btn-secondary btn-dark <?php if ($content_state==1) {echo 'active';} else {echo '';} ?>">
-                        <input type="radio" name="options" id="option2" autocomplete="off"> 
-                        <a href="?ym=<?= $ym; ?>&index=<?= $i_plot; ?>&nm_state=<?= $nm_state; ?>&content_state=1&change=2">
+                        <a href="?ym=<?= $ym; ?>&index=<?= $i_plot; ?>&nm_state=<?= $nm_state; ?>&content=vebwf&lidar=<?= $lidar; ?>" class="btn btn-dark <?php if ($content=="vebwf") {echo 'active';} else {echo '';} ?>">
                         T' (vertical BWF)
                         </a>
-                    </label>
-                    <label class="btn btn-secondary btn-dark <?php if ($content_state==2) {echo 'active';} else {echo '';} ?>">
-                        <input type="radio" name="options" id="option3" autocomplete="off"> 
-                        <a href="?ym=<?= $ym; ?>&index=<?= $i_plot; ?>&nm_state=<?= $nm_state; ?>&content_state=2&change=2">
+                        <a href="?ym=<?= $ym; ?>&index=<?= $i_plot; ?>&nm_state=<?= $nm_state; ?>&content=tempf&lidar=<?= $lidar; ?>" class="btn btn-dark <?php if ($content=="tempf") {echo 'active';} else {echo '';} ?>">
                         T' (temporal mean)
                         </a>
-                    </label>
-                    <label class="btn btn-secondary btn-dark <?php if ($content_state==3) {echo 'active';} else {echo '';} ?>">
-                        <input type="radio" name="options" id="option3" autocomplete="off"> 
-                        <a href="?ym=<?= $ym; ?>&index=<?= $i_plot; ?>&nm_state=<?= $nm_state; ?>&content_state=3&change=2">
+                        <a href="?ym=<?= $ym; ?>&index=<?= $i_plot; ?>&nm_state=<?= $nm_state; ?>&content=aeros&lidar=<?= $lidar; ?>" class="btn btn-dark <?php if ($content=="aeros") {echo 'active';} else {echo '';} ?>">
                         Backscatter
-                        </a>
-                    </label>
-                    <label class="btn btn-secondary btn-dark <?php if ($content_state==4) {echo 'active';} else {echo '';} ?>">
-                        <input type="radio" name="options" id="option3" autocomplete="off"> 
-                        <a href="?ym=<?= $ym; ?>&index=<?= $i_plot; ?>&nm_state=<?= $nm_state; ?>&content_state=4&change=2">
+                        </a> 
+                        <a href="?ym=<?= $ym; ?>&index=<?= $i_plot; ?>&nm_state=<?= $nm_state; ?>&content=era51&lidar=<?= $lidar; ?>" class="btn btn-dark <?php if ($content=="era51") {echo 'active';} else {echo '';} ?>">
                         ERA5 (preview)
                         </a>
-                    </label>
-                    <label class="btn btn-secondary btn-dark <?php if ($content_state==5) {echo 'active';} else {echo '';} ?>">
-                        <input type="radio" name="options" id="option3" autocomplete="off"> 
-                        <a href="?ym=<?= $ym; ?>&index=<?= $i_plot; ?>&nm_state=<?= $nm_state; ?>&content_state=4&change=2">
+                        <a href="?ym=<?= $ym; ?>&index=<?= $i_plot; ?>&nm_state=<?= $nm_state; ?>&content=era52&lidar=<?= $lidar; ?>" class="btn btn-dark <?php if ($content=="era52") {echo 'active';} else {echo '';} ?>">
                         ERA5 (profiles)
                         </a>
-                    </label>
                 </div>
                 </p>
+                <span class="badge" style="background-color: coral; border-color: coral; color: white">CORAL</span>
+                <span class="badge" style="background-color: mediumturquoise; border-color: mediumturquoise; color: white">TELMA</span>
+                <span class="badge" style="background-color: LightSlateGray; border-color: LightSlateGray; color: white">HELIUM</span>
+                <span class="badge" style="background-color: mediumseagreen; border-color: mediumseagreen; color: white">OP-LIDAR</span>
+                <p>
+
 
                 <table class="table table-bordered">
                     <thead>
@@ -306,8 +335,8 @@ for ($day = 1; $day <= $day_count; $day++, $str++) {
         <div class="col-xl-5 col-lg-4 col-md-12">
             <div class="flex-image">
                 <?php 
-                echo "<a href='plot.php?index=" . $i_plot . "&content_state=" . $content_state . "'><img src='" . $available_plots[$i_plot] . "' class='img-fluid' /><img src='" . $available_plots_aerosol[$i_plot] ."' class='img-fluid' /></a>";
-                #echo "<a href='plot.php?index=" . $i_plot . "&content_state=" . $content_state . "'><img src='" . $available_plots[$i_plot] . "' class='img-fluid' /></a>";
+                #echo "<a href='plot.php?index=" . $i_plot . "&content=" . $content . "'><img src='" . $available_plots[$i_plot] . "' class='img-fluid' /><img src='" . $available_plots_aerosol[$i_plot] ."' class='img-fluid' /></a>";
+                echo "<a href='plot.php?index=" . $i_plot . "&content=" . $content . "'><img src='" . $available_plots[$i_plot] . "' class='img-fluid' /></a>";
                 ?>
             </div>
         </div>

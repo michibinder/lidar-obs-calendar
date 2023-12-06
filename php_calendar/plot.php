@@ -3,8 +3,8 @@
 // Determine the required state for plot content
 // content_state = 0 -> tmp
 // content_state = 1 -> bwf
-if (isset($_GET['content_state'])) {
-    if ($_GET['content_state'] == '1'){
+if (isset($_GET['content'])) {
+    if ($_GET['content'] == '1'){
 		$dir = "../plots/bwf/*.png";
 	} else {
 		$dir = "../plots/tmp/*.png";
