@@ -2,23 +2,23 @@
 	/*--form-control-color: rebeccapurple;*/
 	--form-control-color: whitesmoke;
   }
-  
+
 .container {
 	font-family: 'Montserrat', sans-serif;
-	margin: 30px auto; 
-	padding: 10px 15px 10px 30px; /* top right bottom left */
+	margin: 30px 30px 0px 60px;
+	/* padding: 10px 10px 10px 10px; */ /* top right bottom left */
 }
+
+.container2 {
+	font-family: 'Montserrat', sans-serif;
+	margin: 20px 60px 1px 60px;
+	text-align: center;
+}
+
 
 .list-inline {
 	text-align: center;
 	margin-bottom: 15px;
-}
-
-.flex-image {
-	text-align: center;
-	vertical-align: middle;
-	/* margin: 30px auto; */
-	padding: 10px 10px 10px 10px;
 }
 
 .title {
@@ -34,23 +34,6 @@ td {
 	height: 110px;
 	width: 90px;
 }
-th:nth-of-type(6), td:nth-of-type(6) {
-	color: purple;
-}
-th:nth-of-type(7), td:nth-of-type(7) {
-	color: purple;
-}
-.today {
-	background-color: #E8DAEF;
-}
-
-.date_of_last {
-	background-color: rgb(195, 134, 214);
-}
-
-.date_of_plot {
-	background-color: lightgray; 
-}
 
 .btn-group-wrap {
     text-align: center;
@@ -64,10 +47,9 @@ div.btn-group {
 }
 
 .btn-sm {
-	padding: 2px 4px;
-	font-size: 10px;
+	font-size: 11px;
 	text-align: left;
-	width:100%;    /* width of button */
+	width:100%;
 	/* border-radius: 7px; */
 	/* isplay:block; width: 100% for widths of button*/
 }
