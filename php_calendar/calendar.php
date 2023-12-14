@@ -44,7 +44,7 @@ if (isset($_GET['lidar'])) {
 }
 
 if ($lidar == "telma")      {$bc="mediumturquoise";} // mediumturquoise, skyblue
-elseif ($lidar == "helium") {$bc="darkgray";}
+elseif ($lidar == "helix")  {$bc="darkgray";}
 elseif ($lidar == "OP")     {$bc="mediumseagreen";}
 else                        {$bc="coral";}
 
@@ -58,13 +58,8 @@ if (isset($_GET['content'])) {
 // --- Get list of plots for all lidars --- //
 // Get list of files with .jpg extension in the directory and safe it in an array named $available_plots
 chdir(__DIR__); // starts from dir of index.php
-if ($content == "era5") {
-    $dir_coral = "../plots/coral/" . $content . "/*.mp4";
-    $dir_telma = "../plots/telma/" . $content . "/*.mp4";
-} else {
-    $dir_coral = "../plots/coral/" . $content . "/*.png";
-    $dir_telma = "../plots/telma/" . $content . "/*.png";
-}
+$dir_coral = "../plots/coral/" . $content . "/*"; // *.png or *.mp4
+$dir_telma = "../plots/telma/" . $content . "/*";
 $plotlists = array();
 $plots_coral = glob($dir_coral);
 $plots_telma = glob($dir_telma);
@@ -123,7 +118,7 @@ if ($nm_state == 0) {
     $nm_div = 'hide_nm';
     $toggle_button = $toggle_off;
 } else {
-    $nm_div = 'flex-image';
+    $nm_div = 'flex-image'; // CHANGE STYLE!!!!!
     $toggle_button = $toggle_on;
 }
 
@@ -299,26 +294,26 @@ for ($day = 1; $day <= $day_count; $day++, $str++) {
                         <a href="?ym=<?= $ym; ?>&idatetime=<?= $idatetime; ?>&nm_state=<?= $nm_state; ?>&content=tmp&lidar=<?= $lidar; ?>" class="btn btn-dark <?php if ($content=="tmp") {echo 'active';} else {echo '';} ?>">
                         T & T'
                         </a>
-                        <a href="?ym=<?= $ym; ?>&idatetime=<?= $idatetime; ?>&nm_state=<?= $nm_state; ?>&content=filter1&lidar=<?= $lidar; ?>" class="btn btn-dark <?php if ($content=="filter1") {echo 'active';} else {echo '';} ?>">
-                        Filter
+                        <a href="?ym=<?= $ym; ?>&idatetime=<?= $idatetime; ?>&nm_state=<?= $nm_state; ?>&content=filter1D&lidar=<?= $lidar; ?>" class="btn btn-dark <?php if ($content=="filter1D") {echo 'active';} else {echo '';} ?>">
+                        Filter 1D
                         </a>
-                        <a href="?ym=<?= $ym; ?>&idatetime=<?= $idatetime; ?>&nm_state=<?= $nm_state; ?>&content=filter2&lidar=<?= $lidar; ?>" class="btn btn-dark <?php if ($content=="filter2") {echo 'active';} else {echo '';} ?>">
-                        Filter2
+                        <a href="?ym=<?= $ym; ?>&idatetime=<?= $idatetime; ?>&nm_state=<?= $nm_state; ?>&content=filter2D&lidar=<?= $lidar; ?>" class="btn btn-dark <?php if ($content=="filter2D") {echo 'active';} else {echo '';} ?>">
+                        Filter 2D
                         </a>
-                        <a href="?ym=<?= $ym; ?>&idatetime=<?= $idatetime; ?>&nm_state=<?= $nm_state; ?>&content=aerosols&lidar=<?= $lidar; ?>" class="btn btn-dark <?php if ($content=="aerosols") {echo 'active';} else {echo '';} ?>">
-                        Aerosols
-                        </a> 
                         <a href="?ym=<?= $ym; ?>&idatetime=<?= $idatetime; ?>&nm_state=<?= $nm_state; ?>&content=era5&lidar=<?= $lidar; ?>" class="btn btn-dark <?php if ($content=="era5") {echo 'active';} else {echo '';} ?>">
                         ERA5
-                        </a>
+                        </a> 
                         <a href="?ym=<?= $ym; ?>&idatetime=<?= $idatetime; ?>&nm_state=<?= $nm_state; ?>&content=ifs&lidar=<?= $lidar; ?>" class="btn btn-dark <?php if ($content=="ifs") {echo 'active';} else {echo '';} ?>">
-                        IFS profiles
+                        IFS
+                        </a>
+                        <a href="?ym=<?= $ym; ?>&idatetime=<?= $idatetime; ?>&nm_state=<?= $nm_state; ?>&content=aerosols&lidar=<?= $lidar; ?>" class="btn btn-dark <?php if ($content=="aerosols") {echo 'active';} else {echo '';} ?>">
+                        AEROSOLS
                         </a>
                 </div>
                 </p>
                 <span class="badge" style="background-color: coral; border-color: coral; color: white">CORAL</span>
                 <span class="badge" style="background-color: mediumturquoise; border-color: mediumturquoise; color: white">TELMA</span>
-                <span class="badge" style="background-color: LightSlateGray; border-color: LightSlateGray; color: white">HELIUM</span>
+                <span class="badge" style="background-color: LightSlateGray; border-color: LightSlateGray; color: white">HELIX</span>
                 <span class="badge" style="background-color: mediumseagreen; border-color: mediumseagreen; color: white">OP-LIDAR</span>
                 <p>
 
@@ -346,8 +341,28 @@ for ($day = 1; $day <= $day_count; $day++, $str++) {
         </div>
         <div class="col-xl-6 col-lg-4 col-md-12">
             <div class="container2">
-                <?php 
-                echo "<a href='plot.php?index=" . $i_plot . "&lidar=" . $lidar . "&content=" . $content . "'><img src='" . $available_plots[$i_plot] . "'style='max-width: 100%; max-height: 98vh'' /></a>";
+                <?php
+                if ($content == "era5" || $content == "ifs") {
+                    echo "<video id='vid' playsinline muted controls autoplay loop style='max-width: 100%; max-height: 98vh'>
+                            <source src='" . $available_plots[$i_plot] . "' type='video/mp4'>
+                            Your browser does not support the video tag.
+                        </video>
+                        <script>
+                            .get(0).play()
+                            document.getElementById('vid').play();
+                            var video = document.getElementById('vid');
+                            video.addEventListener('click', function() {
+                                if (video.paused) {
+                                    video.play();
+                                } else {
+                                    video.pause();
+                                }
+                            });
+                        </script>";
+                } else {
+                    echo "<img src='" . $available_plots[$i_plot] . "'style='max-width: 100%; max-height: 98vh'/>";
+                    //echo "<a href='plot.php?index=" . $i_plot . "&lidar=" . $lidar . "&content=" . $content . "'><img src='" . $available_plots[$i_plot] . "'style='max-width: 100%; max-height: 98vh'' /></a>";
+                }
                 ?>
             </div>
         </div>

@@ -1,39 +1,8 @@
-# lidar-obs-calendar
-PHP calendar for ground-based Rayleigh lidar measurements
+# MA-lidar-calendar
+PHP calendar for ground-based Rayleigh lidar measurements. Available plots of measurements and model (re)analysis are stored in folders with the same content. Each instrument included in the calendar has its own folder in ./plots/ with different content-folders.
 
+Files have to be named with the timestamp of the measurement followed by the duration, so the calendar can include it. 
 
-<div class="btn-group btn-group-toggle pagination-centered" data-toggle="buttons">
-                        <a href="?ym=<?= $ym; ?>&index=<?= $i_plot; ?>&nm_state=<?= $nm_state; ?>&content=0" class="btn btn-secondary btn-dark <?php if ($content==0) {echo 'active';} else {echo '';} ?>">
-                        Temperature
-                        </a>
-                    <label class="btn btn-secondary btn-dark <?php if ($content==1) {echo 'active';} else {echo '';} ?>">
-                        <input type="radio" name="options" id="option2" autocomplete="off"> 
-                        <a href="?ym=<?= $ym; ?>&index=<?= $i_plot; ?>&nm_state=<?= $nm_state; ?>&content=1">
-                        T' (vertical BWF)
-                        </a>
-                    </label>
-                    <label class="btn btn-secondary btn-dark <?php if ($content==2) {echo 'active';} else {echo '';} ?>">
-                        <input type="radio" name="options" id="option3" autocomplete="off"> 
-                        <a href="?ym=<?= $ym; ?>&index=<?= $i_plot; ?>&nm_state=<?= $nm_state; ?>&content=2">
-                        T' (temporal mean)
-                        </a>
-                    </label>
-                    <label class="btn btn-secondary btn-dark <?php if ($content==3) {echo 'active';} else {echo '';} ?>">
-                        <input type="radio" name="options" id="option3" autocomplete="off"> 
-                        <a href="?ym=<?= $ym; ?>&index=<?= $i_plot; ?>&nm_state=<?= $nm_state; ?>&content=3">
-                        Backscatter
-                        </a>
-                    </label>
-                    <label class="btn btn-secondary btn-dark <?php if ($content==4) {echo 'active';} else {echo '';} ?>">
-                        <input type="radio" name="options" id="option3" autocomplete="off"> 
-                        <a href="?ym=<?= $ym; ?>&index=<?= $i_plot; ?>&nm_state=<?= $nm_state; ?>&content=4">
-                        ERA5 (preview)
-                        </a>
-                    </label>
-                    <label class="btn btn-secondary btn-dark <?php if ($content==5) {echo 'active';} else {echo '';} ?>">
-                        <input type="radio" name="options" id="option3" autocomplete="off"> 
-                        <a href="?ym=<?= $ym; ?>&index=<?= $i_plot; ?>&nm_state=<?= $nm_state; ?>&content=4">
-                        ERA5 (profiles)
-                        </a>
-                    </label>
-                </div>
+%YYYY%MM%DD-%HH%MM_%HHh%MMmin.png
+
+The folders have to be named based on the variables used in the php code (tmp,filter1,filter2,era5,ifs)
