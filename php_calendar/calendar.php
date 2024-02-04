@@ -58,8 +58,8 @@ if (isset($_GET['content'])) {
 // --- Get list of plots for all lidars --- //
 // Get list of files with .jpg extension in the directory and safe it in an array named $available_plots
 chdir(__DIR__); // starts from dir of index.php
-$dir_coral = "../plots/coral/" . $content . "/*"; // *.png or *.mp4
-$dir_telma = "../plots/telma/" . $content . "/*";
+$dir_coral = "../data/coral/" . $content . "/*"; // *.png or *.mp4
+$dir_telma = "../data/telma/" . $content . "/*";
 $plotlists = array();
 $plots_coral = glob($dir_coral);
 $plots_telma = glob($dir_telma);
@@ -258,6 +258,11 @@ for ($day = 1; $day <= $day_count; $day++, $str++) {
         $week = '';
     }
 }
+
+$description_filter1D   = "Panel (a): ERA5 temperature perturbations (absolute T minus truncated field RT21). Panel (b): Lidar measurement temporally filtered and overlaid by ERA5 data filtered similarly. Panel (c): Lidar measurement filtered vertically with a butterworth filter (cutoff at 15km) and overlaid by ERA5 data filtered similarly.";
+$description_era5_tropo = "Panel (a) emulates the measurement of a vertically staring ground-based lidar. Panel (b) shows absolute temperature profiles (ERA5: black, Lidar: red). Panels (c) and (d) are vertical sections of stratospheric T' along sectors of the latitude circle (c) and meridian (d) of the virtual lidar location. (e) and (f) are corresponding vertical sections of thermal stability N2 (10−4 s−2, color-coded), potential temperature (K, thin grey lines), and potential vorticity (1, 2, 4 PVU: black, 2 PVU: green) in the vicinity of the dynamical tropopause. Thin black lines in the vertical sections are zonal (d, f) and meridional (c, e) wind components (solid: positive, dashed: negative). Panel (g) is a horizontal section of the height of the 2 PVU surface (km, color-coded), geopotential height (m, solid lines) and wind barbs at the 700 hPa level. The black vertical line in (a) marks the current timestamp for (b)-(g) and dashed lines in (c)-(g) highlight the location of the virtual lidar and profiles in (a) and (b).";
+$description_era5_jet   = "Panel (a) emulates the measurement of a vertically staring ground-based lidar. Panel (b) shows absolute temperature profiles (ERA5: black, Lidar: red). Panels (c), (e) and (g) show contours of ERA5 temperature perturbations (T-T21) at different altitudes and the horizontal wind speed at 300hPa color coded in green. Panels (d), (f) and (h) show same contours of temperature perturbations overlaid with the 2PVU level (dynamical tropopause height) color coded. Panels (i) and (j) show vertical cross sections with contours of ERA5 T' and height of the dynamical tropopause for different values (2PVU level in green). Zonal and meridional wind components are overlaid (solid: positive, dashed: negative). The black vertical line in (a) marks the current timestamp for (b)-(j).";
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -295,16 +300,16 @@ for ($day = 1; $day <= $day_count; $day++, $str++) {
                         T & T'
                         </a>
                         <a href="?ym=<?= $ym; ?>&idatetime=<?= $idatetime; ?>&nm_state=<?= $nm_state; ?>&content=filter1D&lidar=<?= $lidar; ?>" class="btn btn-dark <?php if ($content=="filter1D") {echo 'active';} else {echo '';} ?>">
-                        Filter 1D
+                        FILTER 1D
                         </a>
                         <a href="?ym=<?= $ym; ?>&idatetime=<?= $idatetime; ?>&nm_state=<?= $nm_state; ?>&content=filter2D&lidar=<?= $lidar; ?>" class="btn btn-dark <?php if ($content=="filter2D") {echo 'active';} else {echo '';} ?>">
-                        Filter 2D
+                        FILTER 2D
                         </a>
-                        <a href="?ym=<?= $ym; ?>&idatetime=<?= $idatetime; ?>&nm_state=<?= $nm_state; ?>&content=era5&lidar=<?= $lidar; ?>" class="btn btn-dark <?php if ($content=="era5") {echo 'active';} else {echo '';} ?>">
-                        ERA5
+                        <a href="?ym=<?= $ym; ?>&idatetime=<?= $idatetime; ?>&nm_state=<?= $nm_state; ?>&content=era5-tropo&lidar=<?= $lidar; ?>" class="btn btn-dark <?php if ($content=="era5-tropo") {echo 'active';} else {echo '';} ?>">
+                        ERA5 I
                         </a> 
-                        <a href="?ym=<?= $ym; ?>&idatetime=<?= $idatetime; ?>&nm_state=<?= $nm_state; ?>&content=ifs&lidar=<?= $lidar; ?>" class="btn btn-dark <?php if ($content=="ifs") {echo 'active';} else {echo '';} ?>">
-                        IFS
+                        <a href="?ym=<?= $ym; ?>&idatetime=<?= $idatetime; ?>&nm_state=<?= $nm_state; ?>&content=era5-jet&lidar=<?= $lidar; ?>" class="btn btn-dark <?php if ($content=="era5-jet") {echo 'active';} else {echo '';} ?>">
+                        ERA5 II
                         </a>
                         <a href="?ym=<?= $ym; ?>&idatetime=<?= $idatetime; ?>&nm_state=<?= $nm_state; ?>&content=aerosols&lidar=<?= $lidar; ?>" class="btn btn-dark <?php if ($content=="aerosols") {echo 'active';} else {echo '';} ?>">
                         AEROSOLS
@@ -365,6 +370,13 @@ for ($day = 1; $day <= $day_count; $day++, $str++) {
                 }
                 ?>
             </div>
+            <p>
+            </p>
+            <p  class="center" style="width: 90%; padding: 0% 0% 0% 10%">
+            <small id="infoBlock" class="form-text text-muted">
+                <?php if ($content == "era5-tropo") {echo "$description_era5_tropo";} elseif ($content == "era5-jet") {echo "$description_era5_jet";} elseif ($content == "filter1D") {echo "$description_filter1D";} ?>
+            </small>
+            </p>
         </div>
     </div>
 
