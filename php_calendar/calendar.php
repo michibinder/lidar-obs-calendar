@@ -1,4 +1,7 @@
 <?php
+// ini_set('display_errors', 1);
+// ini_set('display_startup_errors', 1);
+// error_reporting(E_ALL);
 
 function generate_plot_infos($plotlist){
     $plot_dates = array();
@@ -14,8 +17,10 @@ function generate_plot_infos($plotlist){
 
         // --- Array with durations --- //
         $plot_durations_string = substr(basename($plot), 14,5);
-        if ($plot_durations_string[0] == '0'){
-            $plot_durations_string = substr($plot_durations_string,1,4);
+        if (strlen($plot_durations_string) > 0) {
+            if ($plot_durations_string[0] == '0'){
+                $plot_durations_string = substr($plot_durations_string,1,4);
+            }
         }
         // --- Append to arrays --- #
         $plot_dates[]          = date_format($plot_date, 'Y-m-j');
@@ -148,19 +153,26 @@ if (in_array($idatetime, $plot_dates_and_time)) {
     $i_plot = count($available_plots)-1;
 }
 
-// --- Get date of last plot --- #
-$last_plot        = basename($available_plots[array_key_last($available_plots)]);
-$last_date_string = substr($last_plot, 0,8);
-$last_date        = date_create_from_format('Ymd', $last_date_string);
-$date_of_last     = date_format($last_date, 'Y-m-j');
+if (count($available_plots) > 0) {
+    // --- Get date of last plot --- //
+    $last_plot        = basename($available_plots[array_key_last($available_plots)]);
+    $last_date_string = substr($last_plot, 0,8);
+    $last_date        = date_create_from_format('Ymd', $last_date_string);
+    $date_of_last     = date_format($last_date, 'Y-m-j');
 
-// --- Get date of plot --- #
-$current_plot = basename($available_plots[($i_plot)]);
-$current_date_string = substr($current_plot, 0,8);
-$current_date = date_create_from_format('Ymd', $current_date_string);
-$date_of_plot = date_format($current_date, 'Y-m-j');
+    // --- Get date of plot --- //
+    $current_plot = basename($available_plots[($i_plot)]);
+    $current_date_string = substr($current_plot, 0,8);
+    $current_date = date_create_from_format('Ymd', $current_date_string);
+    $date_of_plot = date_format($current_date, 'Y-m-j');
 
-// --- Generate arrays with plot infos (date, time, duration) --- #
+} else {
+    $last_date        = date('Y-m-j');
+    $date_of_last     = date('Y-m-j');
+    $date_of_plot     = date('Y-m-j');
+}
+
+// --- Generate arrays with plot infos (date, time, duration) --- //
 $plot_infos = generate_plot_infos($plotlists[0]);
 $plot_dates_coral          = $plot_infos[0];
 $plot_dates_and_time_coral = $plot_infos[1];
@@ -370,26 +382,28 @@ $description_era5_jet   = "Panel (a) emulates the measurement of a vertically st
         <div class="col-xl-6 col-lg-4 col-md-12">
             <div class="container2">
                 <?php
-                if ($content == "era5-tropo" || $content == "era5-jet" || $content == "amtm2D") {
-                    echo "<video id='vid' playsinline muted controls autoplay loop style='max-width: 100%; max-height: 98vh'>
-                            <source src='" . $available_plots[$i_plot] . "' type='video/mp4'>
-                            Your browser does not support the video tag.
-                        </video>
-                        <script>
-                            .get(0).play()
-                            document.getElementById('vid').play();
-                            var video = document.getElementById('vid');
-                            video.addEventListener('click', function() {
-                                if (video.paused) {
-                                    video.play();
-                                } else {
-                                    video.pause();
-                                }
-                            });
-                        </script>";
-                } else {
-                    echo "<img src='" . $available_plots[$i_plot] . "'style='max-width: 100%; max-height: 98vh'/>";
-                    //echo "<a href='plot.php?index=" . $i_plot . "&lidar=" . $lidar . "&content=" . $content . "'><img src='" . $available_plots[$i_plot] . "'style='max-width: 100%; max-height: 98vh'' /></a>";
+                if ($i_plot > 0) {
+                    if ($content == "era5-tropo" || $content == "era5-jet" || $content == "amtm2D") {
+                        echo "<video id='vid' playsinline muted controls autoplay loop style='max-width: 100%; max-height: 98vh'>
+                                <source src='" . $available_plots[$i_plot] . "' type='video/mp4'>
+                                Your browser does not support the video tag.
+                            </video>
+                            <script>
+                                .get(0).play()
+                                document.getElementById('vid').play();
+                                var video = document.getElementById('vid');
+                                video.addEventListener('click', function() {
+                                    if (video.paused) {
+                                        video.play();
+                                    } else {
+                                        video.pause();
+                                    }
+                                });
+                            </script>";
+                    } else {
+                        echo "<img src='" . $available_plots[$i_plot] . "'style='max-width: 100%; max-height: 98vh'/>";
+                        //echo "<a href='plot.php?index=" . $i_plot . "&lidar=" . $lidar . "&content=" . $content . "'><img src='" . $available_plots[$i_plot] . "'style='max-width: 100%; max-height: 98vh'' /></a>";
+                    }
                 }
                 ?>
             </div>
