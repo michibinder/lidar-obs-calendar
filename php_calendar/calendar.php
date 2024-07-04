@@ -288,10 +288,11 @@ for ($day = 1; $day <= $day_count; $day++, $str++) {
     }
 }
 
-$description_filter1D   = "Panel (a): ERA5 temperature perturbations (absolute T minus truncated field RT21). Panel (b): Lidar measurement temporally filtered and overlaid by ERA5 data filtered similarly. Panel (c): Lidar measurement filtered vertically with a butterworth filter (cutoff at 15km) and overlaid by ERA5 data filtered similarly.";
-$description_filter_stacked = "Temperature background and perturbations after consecutively applying a temporal and a vertical butterworth filter. (a) shows the background overlaid by the ERA5 in purple, (b) shows the absolute temperature profile of the measurement (black) and ERA5 (violet). Panel (c) shows perturbations with a large vertical wavelength and relatively short period in the time-height diagram. (e) represents stationary waves with short vertical wavelengths like mountain waves (MWs) and (g) are the remaining perturbations with a small vertical wavelength and short period.";
+$description_filt_1D   = "Panel (a): ERA5 temperature perturbations (absolute T minus truncated field RT21). Panel (b): Lidar measurement temporally filtered and overlaid by ERA5 data filtered similarly. Panel (c): Lidar measurement filtered vertically with a butterworth filter (cutoff at 15km) and overlaid by ERA5 data filtered similarly.";
+$description_filt_stacked = "Temperature background and perturbations after consecutively applying a temporal and a vertical butterworth filter. (a) shows the background overlaid by the ERA5 in purple, (b) shows the absolute temperature profile of the measurement (black) and ERA5 (violet). Panel (c) shows perturbations with a large vertical wavelength and relatively short period in the time-height diagram. (e) represents stationary waves with short vertical wavelengths like mountain waves (MWs) and (g) are the remaining perturbations with a small vertical wavelength and short period.";
 $description_era5_tropo = "Panel (a) emulates the measurement of a vertically staring ground-based lidar. Panel (b) shows absolute temperature profiles (ERA5: black, Lidar: red). Panels (c) and (d) are vertical sections of stratospheric T' along sectors of the latitude circle (c) and meridian (d) of the virtual lidar location. (e) and (f) are corresponding vertical sections of thermal stability N2 (10−4 s−2, color-coded), potential temperature (K, thin grey lines), and potential vorticity (1, 2, 4 PVU: black, 2 PVU: green) in the vicinity of the dynamical tropopause. Thin black lines in the vertical sections are zonal (d, f) and meridional (c, e) wind components (solid: positive, dashed: negative). Panel (g) is a horizontal section of the height of the 2 PVU surface (km, color-coded), geopotential height (m, solid lines) and wind barbs at the 700 hPa level. The black vertical line in (a) marks the current timestamp for (b)-(g) and dashed lines in (c)-(g) highlight the location of the virtual lidar and profiles in (a) and (b).";
-$description_era5_jet   = "Panel (a) emulates the measurement of a vertically staring ground-based lidar. Panel (b) shows absolute temperature profiles (ERA5: black, Lidar: red). Panels (c), (e) and (g) show contours of ERA5 temperature perturbations (T-T21) at different altitudes and the horizontal wind speed at 300hPa color coded in green. Panels (d), (f) and (h) show same contours of temperature perturbations overlaid with the 2PVU level (dynamical tropopause height) color coded. Panels (i) and (j) show vertical cross sections with contours of ERA5 T' and height of the dynamical tropopause for different values (2PVU level in green). Zonal and meridional wind components are overlaid (solid: positive, dashed: negative). The black vertical line in (a) marks the current timestamp for (b)-(j).";
+$description_era5_jet_pvu   = "Panel (a) emulates the measurement of a vertically staring ground-based lidar. Panel (b) shows absolute temperature profiles (ERA5: black, Lidar: red). Panels (c), (e) and (g) show contours of ERA5 temperature perturbations (T-T21) at different altitudes and the horizontal wind speed at 300hPa color coded in green. Panels (d), (f) and (h) show same contours of temperature perturbations overlaid with the 2PVU level (dynamical tropopause height) color coded. Panels (i) and (j) show vertical cross sections with contours of ERA5 T' and height of the dynamical tropopause for different values (2PVU level in green). Zonal and meridional wind components are overlaid (solid: positive, dashed: negative). The black vertical line in (a) marks the current timestamp for (b)-(j).";
+$description_era5_jet = "Panel (a) shows ERA5 and SAAMER zonal and meridional wind. Panel (b) emulates the measurement of a vertically staring ground-based lidar. Panel (c) shows absolute temperature profiles (ERA5: black, Lidar: red). Panels (d)-(h) show contours of ERA5 temperature perturbations (T-T21) at different altitudes and the horizontal wind speed at 300hPa color coded in green and wind speed at the same altitude in gray. Panels (i) and (j) show vertical cross sections with contours of ERA5 T' and height of the dynamical tropopause for different values (2PVU level in green). Zonal and meridional wind components are overlaid (solid: positive, dashed: negative). The black vertical line in (b) marks the current timestamp for (a)-(j).";
 
 ?>
 <!DOCTYPE html>
@@ -329,17 +330,20 @@ $description_era5_jet   = "Panel (a) emulates the measurement of a vertically st
                         <a href="?ym=<?= $ym; ?>&idatetime=<?= $idatetime; ?>&nm_state=<?= $nm_state; ?>&content=tmp&lidar=<?= $lidar; ?>" class="btn btn-dark <?php if ($content=="tmp") {echo 'active';} else {echo '';} ?>">
                         T & T'
                         </a>
-                        <a href="?ym=<?= $ym; ?>&idatetime=<?= $idatetime; ?>&nm_state=<?= $nm_state; ?>&content=filter1D&lidar=<?= $lidar; ?>" class="btn btn-dark <?php if ($content=="filter1D") {echo 'active';} else {echo '';} ?>">
-                        1D FILTER
+                        <a href="?ym=<?= $ym; ?>&idatetime=<?= $idatetime; ?>&nm_state=<?= $nm_state; ?>&content=filt-1D&lidar=<?= $lidar; ?>" class="btn btn-dark <?php if ($content=="filt-1D") {echo 'active';} else {echo '';} ?>">
+                        FILT 1D
                         </a>
-                        <a href="?ym=<?= $ym; ?>&idatetime=<?= $idatetime; ?>&nm_state=<?= $nm_state; ?>&content=filter-stacked&lidar=<?= $lidar; ?>" class="btn btn-dark <?php if ($content=="filter-stacked") {echo 'active';} else {echo '';} ?>">
-                        STACKED FILTER
+                        <a href="?ym=<?= $ym; ?>&idatetime=<?= $idatetime; ?>&nm_state=<?= $nm_state; ?>&content=filt-stacked&lidar=<?= $lidar; ?>" class="btn btn-dark <?php if ($content=="filt-stacked") {echo 'active';} else {echo '';} ?>">
+                        FILT STACKED
                         </a>
                         <a href="?ym=<?= $ym; ?>&idatetime=<?= $idatetime; ?>&nm_state=<?= $nm_state; ?>&content=era5-tropo&lidar=<?= $lidar; ?>" class="btn btn-dark <?php if ($content=="era5-tropo") {echo 'active';} else {echo '';} ?>">
                         ERA5 I
                         </a> 
-                        <a href="?ym=<?= $ym; ?>&idatetime=<?= $idatetime; ?>&nm_state=<?= $nm_state; ?>&content=era5-jet&lidar=<?= $lidar; ?>" class="btn btn-dark <?php if ($content=="era5-jet") {echo 'active';} else {echo '';} ?>">
+                        <a href="?ym=<?= $ym; ?>&idatetime=<?= $idatetime; ?>&nm_state=<?= $nm_state; ?>&content=era5-jet-pvu&lidar=<?= $lidar; ?>" class="btn btn-dark <?php if ($content=="era5-jet-pvu") {echo 'active';} else {echo '';} ?>">
                         ERA5 II
+                        </a>
+                        <a href="?ym=<?= $ym; ?>&idatetime=<?= $idatetime; ?>&nm_state=<?= $nm_state; ?>&content=era5-jet&lidar=<?= $lidar; ?>" class="btn btn-dark <?php if ($content=="era5-jet") {echo 'active';} else {echo '';} ?>">
+                        ERA5 III
                         </a>
                         <a href="?ym=<?= $ym; ?>&idatetime=<?= $idatetime; ?>&nm_state=<?= $nm_state; ?>&content=aerosols&lidar=<?= $lidar; ?>" class="btn btn-dark <?php if ($content=="aerosols") {echo 'active';} else {echo '';} ?>">
                         AEROSOLS
@@ -383,7 +387,7 @@ $description_era5_jet   = "Panel (a) emulates the measurement of a vertically st
             <div class="container2">
                 <?php
                 if ($i_plot > 0) {
-                    if ($content == "era5-tropo" || $content == "era5-jet" || $content == "amtm2D") {
+                    if ($content == "era5-tropo" || $content == "era5-jet" || $content == "era5-jet-pvu" || $content == "amtm2D") {
                         echo "<video id='vid' playsinline muted controls autoplay loop style='max-width: 100%; max-height: 98vh'>
                                 <source src='" . $available_plots[$i_plot] . "' type='video/mp4'>
                                 Your browser does not support the video tag.
@@ -411,11 +415,13 @@ $description_era5_jet   = "Panel (a) emulates the measurement of a vertically st
             </p>
             <p  class="center" style="width: 90%; padding: 0% 0% 0% 10%">
             <small id="infoBlock" class="form-text text-muted">
-                <?php if ($content == "era5-tropo") {echo "$description_era5_tropo";} elseif ($content == "era5-jet") {echo "$description_era5_jet";} elseif ($content == "filter1D") {echo "$description_filter1D";} elseif ($content == "filter-stacked") {echo "$description_filter_stacked";} ?>
+                <?php if ($content == "era5-tropo") {echo "$description_era5_tropo";} elseif ($content == "era5-jet-pvu") {echo "$description_era5_jet_pvu";} elseif ($content == "filt-1D") {echo "$description_filt_1D";} elseif ($content == "filt-stacked") {echo "$description_filt_stacked";} ?>
             </small>
             </p>
         </div>
     </div>
+
+<hr><p align="center"><a href="../coral_publications.php">Publication archive</a> - <a href="../rules.htm">Rules of the Road for data usage</a> - <a href="http://www.pa.op.dlr.de/impressum.html">Impressum</a> / <a href="http://www.pa.op.dlr.de/imprint.html">Imprint</a>  - <a href="http://www.pa.op.dlr.de/datenschutzerklaerung.html">Datenschutzerklärung</a> / <a href="http://www.pa.op.dlr.de/privacy.html">Privacy Policy</a> 
 
 </body>
 </html>

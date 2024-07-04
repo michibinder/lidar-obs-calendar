@@ -54,24 +54,7 @@
 <body> 
     <div class="container">
 
-<div class="title">Scientific publications using IPA middle atmosphere lidar data</div>
-</div>
-
-<div class="container">
-The lidar instrument citation is: Kaifler, Bernd und Kaifler, Natalie (2021) <a href="https://elib.dlr.de/141243/">A Compact Rayleigh Autonomous Lidar (CORAL) for the middle atmosphere</a>. Atmospheric Measurement Techniques, 14 (2), Seiten 1715-1732. Copernicus Publications. doi: 10.5194/amt-14-1715-2021. ISSN 1867-1381. 
-</div>
-
-<div class="container">
-<div class="subtitle">2024</div>
-
-<ul>
-<li>
-Gupta et al., Estimates of Southern Hemispheric Gravity Wave Momentum Fluxes Across Observations, Reanalyses, and Kilometer-scale Numerical Weather Prediction Model, https://journals.ametsoc.org/view/journals/atsc/aop/JAS-D-23-0095.1/JAS-D-23-0095.1.xml
-</li>
-<li>
-https://agupubs.onlinelibrary.wiley.com/doi/10.1029/2023JD040156
-</li>
-</ul>
+<div class="title">Scientific publications using CORAL data</div>
 </div>
 
 <div class="container">
@@ -79,7 +62,7 @@ https://agupubs.onlinelibrary.wiley.com/doi/10.1029/2023JD040156
 
 <ul>
 <li>
-David C. Fritts, Gerd Baumgarten, P.-Dominique Pautet, James H. Hecht, Bifford P., Williams, Natalie Kaifler, Bernd Kaifler, C. Bjorn Kjellstrand, Ling Wang, Michael J. Taylor, and Amber D. Miller, Kelvin Helmholtz Instability “Tube” &amp; “Knot” Dynamics, Part I: Expanding Observational Evidence of Occurrence and Environmental Influences", JAS
+David C. Fritts, Gerd Baumgarten, P.-Dominique Pautet, James H. Hecht, Bifford P., Williams, Natalie Kaifler, Bernd Kaifler, C. Bjorn Kjellstrand, Ling Wang, Michael J. Taylor, and Amber D. Miller, Kelvin Helmholtz Instability “Tube” &amp; “Knot” Dynamics, Part I: Expanding Observational Evidence of Occurrence and Environmental Influences", in press, JAS
 </li>
 </ul>
 </div>
